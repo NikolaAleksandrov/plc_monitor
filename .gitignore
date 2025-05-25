@@ -75,3 +75,4 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 /plc_monitor/dist/*
 /plc_monitor_ui/dist/*
 /plc_monitor_ui/node_modules/*
+plc_monitor_ui/.angular/*
