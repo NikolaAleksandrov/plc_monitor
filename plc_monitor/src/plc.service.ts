@@ -5,19 +5,22 @@ import {
   OnModuleDestroy,
 } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
-import { Controller, Tag } from 'ethernet-ip';
+import ModbusRTU from 'modbus-serial';
 
 @Injectable()
 export class PLCService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger('PLCService');
-  private plc: Controller;
-  private digitalInputTag: Tag;
+
+  private client: ModbusRTU;
   private isConnected = false;
-  private plcIpAddress = '192.168.1.10'; // Replace with your PLC's IP address
+  private plcIpAddress = '192.168.29.1'; // Replace with your PLC's IP address
+  private plcPort = 502; // Default Modbus TCP port
+  private inputState = 0; // Initial state of the digital input
+  private registerAddress = 0; // Modbus register address (replace with actual register address)
+  private unitId = 25; // Unit ID for the PLC
 
   constructor() {
-    this.plc = new Controller();
-    this.digitalInputTag = new Tag('D0.1'); // Digital input D0.1
+    this.client = new ModbusRTU();
   }
 
   async onModuleInit() {
@@ -32,11 +35,14 @@ export class PLCService implements OnModuleInit, OnModuleDestroy {
 
   private async connectToPLC() {
     try {
-      this.logger.log(`Connecting to PLC at ${this.plcIpAddress}...`);
-      await this.plc.connect(this.plcIpAddress).then(() => {
-        console.log(this.plc.properties);
-      });
-      await this.plc.readTag(this.digitalInputTag);
+      this.logger.log(
+        `Connecting to PLC at ${this.plcIpAddress}:${this.plcPort}...`,
+      );
+
+      await this.client.connectTCP(this.plcIpAddress, { port: this.plcPort });
+      this.client.setID(this.unitId);
+      this.client.setTimeout(3000); // 3 second timeout
+
       this.isConnected = true;
       this.logger.log('Successfully connected to PLC');
     } catch (error) {
@@ -49,7 +55,7 @@ export class PLCService implements OnModuleInit, OnModuleDestroy {
 
   private async disconnectFromPLC() {
     try {
-      await this.plc.disconnect();
+      await this.client.close();
       this.isConnected = false;
       this.logger.log('Disconnected from PLC');
     } catch (error) {
@@ -57,7 +63,7 @@ export class PLCService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  @Interval('pullData', 5000)
+  @Interval('pullData', 5)
   async pullData(): Promise<string> {
     if (!this.isConnected) {
       this.logger.warn('PLC not connected. Attempting to reconnect...');
@@ -66,11 +72,21 @@ export class PLCService implements OnModuleInit, OnModuleDestroy {
     }
 
     try {
-      this.logger.log('Pulling data from PLC...');
-      await this.plc.readTag(this.digitalInputTag);
-      const inputState = this.digitalInputTag.value;
-      this.logger.log(`Digital input D0.1 state: ${inputState}`);
-      return `Digital input D0.1 state: ${inputState}`;
+      // this.logger.log('Pulling data from PLC...');
+      // Read discrete inputs using modbus-serial
+      const a = await this.client.readDiscreteInputs(24576, 1);
+      // const b = await this.client.readDeviceIdentification(
+      //   this.registerAddress,
+      //   1,
+      // );
+      const inputState = a.data[0] ? 1 : 0;
+      if (inputState !== this.inputState) {
+        this.inputState = inputState;
+        this.logger.log(`Digital input state changed: ${inputState}`);
+      }
+
+      // this.logger.log(`Digital input state: ${inputState}`);
+      return `Digital input state: ${inputState}`;
     } catch (error) {
       this.logger.error(`Error reading from PLC: ${error.message}`);
       this.isConnected = false;

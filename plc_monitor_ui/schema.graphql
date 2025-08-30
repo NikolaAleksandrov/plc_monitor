@@ -1,0 +1,2777 @@
+type Binary implements Node & Timestamped {
+  id: ID!
+  modifiedOn: DateType
+  version: String!
+  fileName: String
+  fileSize: Float
+  owner: Group!
+  versions(skip: Int, first: Int, last: Int): [Binary!]
+  binaryHref: String
+}
+
+input BinaryWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  version: String
+  version_not: String
+  version_in: [String!]
+  version_not_in: [String!]
+  modifiedOn: DateType
+  modifiedOn_not: DateType
+  modifiedOn_in: [DateType!]
+  modifiedOn_not_in: [DateType!]
+  fileName: String
+  fileName_not: String
+  fileName_in: [String!]
+  fileName_not_in: [String!]
+  fileSize: Float
+  fileSize_not: Float
+  fileSize_gt: Float
+  fileSize_gte: Float
+  fileSize_lt: Float
+  fileSize_lte: Float
+  owner: OwnerRefWhereInput
+  OR: [BinaryWhereInput!]
+  AND: [BinaryWhereInput!]
+}
+
+input BinaryOrderByInput {
+  field: BinarySortField!
+  direction: SortDirection!
+  element: OrderByElementInput
+}
+
+enum BinarySortField {
+  id
+  fileName
+  version
+}
+
+type ClientConfiguration implements Node & Timestamped {
+  id: ID!
+  modifiedOn: DateType
+  clientAppType: String
+  data: Binary
+  owner: Group!
+}
+
+input ClientConfigurationWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  modifiedOn: DateType
+  modifiedOn_not: DateType
+  modifiedOn_in: [DateType!]
+  modifiedOn_not_in: [DateType!]
+  clientAppType: String
+  clientAppType_not: String
+  clientAppType_in: [String!]
+  clientAppType_not_in: [String!]
+  data: VersionedSubentityWhereInput
+  owner: OwnerRefWhereInput
+  OR: [ClientConfigurationWhereInput!]
+  AND: [ClientConfigurationWhereInput!]
+}
+
+input ClientConfigurationOrderByInput {
+  field: ClientConfigurationSortField!
+  direction: SortDirection!
+  element: OrderByElementInput
+}
+
+enum ClientConfigurationSortField {
+  id
+  clientAppType
+}
+
+input OrderByElementInput {
+  id: String!
+  value: String!
+}
+
+input SubentityWhereInput {
+  id: String
+  id_not: String
+  id_in: [String!]
+  id_not_in: [String!]
+  OR: [SubentityWhereInput!]
+  AND: [SubentityWhereInput!]
+}
+
+input VersionedSubentityWhereInput {
+  id: String
+  id_not: String
+  id_in: [String!]
+  id_not_in: [String!]
+  version: String
+  version_not: String
+  version_in: [String!]
+  version_not_in: [String!]
+  OR: [VersionedSubentityWhereInput!]
+  AND: [VersionedSubentityWhereInput!]
+}
+
+input VersionedSomeRefWhereInput {
+  id: String
+  version: String
+}
+
+input SomeRefWhereInput {
+  id: String
+}
+
+interface Node {
+  id: ID!
+}
+
+"""
+All timestamped entities include a modifiedOn attribute that is set by the server whenever the entity is changed.
+"""
+interface Timestamped {
+  modifiedOn: DateType
+}
+
+"""
+Versioned entities implement the Versioned interface.
+"""
+interface Versioned {
+  version: String!
+}
+
+"""
+Entites that include translated texts implement the Named interface.
+"""
+interface Named {
+  nameTextId: String!
+  shortnameTextId: String!
+  commentTextId: String!
+  names(first: Int, last: Int, skip: Int): [RatedTranslation]
+  shortnames(first: Int, last: Int, skip: Int): [RatedTranslation]
+  comments(first: Int, last: Int, skip: Int): [RatedTranslation]
+}
+
+"""
+Tolerance definition for parameters and valuecolumns.
+"""
+type Tolerance {
+  upperLimit: Float
+  lowerLimit: Float
+  target: Float
+}
+
+enum SortDirection {
+  ASC
+  DESC
+}
+
+type Config {
+  app: ConfigApp!
+  port: Int!
+  database: ConfigDatabase!
+  log: ConfigLog!
+  statsDashboard: Boolean!
+  host: String!
+  publicBaseURL: String
+  binaryDataFolder: String!
+  binaryDataService: BinaryDataService!
+  exportDataFolder: String!
+  exportExpiry: Int!
+  exportCompressionLevel: Int!
+  headersTimeout: Int!
+  requestTimeout: Int!
+  idleRequestConnectionTimeout: Int!
+  lockWaitTimeout: Int!
+  pollTimeMin: Float!
+  pollJitter: Float!
+  ssl: ConfigSsl!
+  bodyParser: ConfigBodyParser!
+  formatResponseJSON: Boolean!
+  epsilon: Float!
+  auth: ConfigAuth!
+  mimeTypes: ConfigMimeTypes!
+  cors: ConfigCors!
+  import: ConfigImport!
+  validation: ConfigValidation!
+  consul: ConfigConsul!
+  graphql: ConfigGraphQL!
+  messageBroker: ConfigMessageBroker!
+}
+
+type ConfigApp {
+  name: String!
+}
+
+type ConfigDatabase {
+  schema: String!
+  driver: String!
+  host: String!
+  port: String!
+  additionalOptions: String!
+  options: ConfigDatabaseOptions!
+}
+
+type ConfigDatabaseOptions {
+  user: String!
+  pass: String!
+  server: ConfigDatabaseOptionsServer!
+  autoCreate: Boolean!
+  autoIndex: Boolean!
+}
+
+type ConfigDatabaseOptionsServer {
+  connectTimeoutMS: Int!
+  socketTimeoutMS: Int!
+}
+
+type ConfigLog {
+  level: String!
+  directory: String!
+  timestampFormat: String!
+  mongoLogInterval: Int!
+  responseTimeThreshold: Int!
+  memoryMonitoring: ConfigMemoryMonitoring!
+}
+
+type ConfigSsl {
+  useSSL: Boolean!
+  keyPath: String!
+  certificatePath: String!
+}
+
+type BinaryDataService {
+  strategy: String!
+}
+
+type ConfigBodyParser {
+  limit: String!
+}
+
+type ConfigAuth {
+  maxCacheAge: Int!
+  maxCacheSize: Int!
+  autoWhitelistEntry: ConfigAuthWhitelistEntry
+  failedLoginAttempts: Int!
+  failedLoginExpiry: Int!
+  failedLoginLockTime: Int!
+  authServers: [ConfigAuthServer!]!
+}
+
+type ConfigAuthWhitelistEntry {
+  GET: Boolean!
+  PUT: Boolean!
+  POST: Boolean!
+  DELETE: Boolean!
+  HEAD: Boolean!
+}
+
+type ConfigAuthServer {
+  id: String!
+  type: String!
+  active: Boolean!
+}
+
+type ConfigMimeTypes {
+  fileExtensions: ConfigMimeTypesFileExtensions!
+  default: String!
+}
+
+type ConfigMimeTypesFileExtensions {
+  jpg: String!
+  jpeg: String!
+}
+
+type ConfigCors {
+  origin: Boolean!
+  exposedHeaders: [String!]
+}
+
+type ConfigImport {
+  tempFolder: String!
+  jobExpiry: Int!
+  fileConcurrency: Int!
+  tokenExpiry: Int!
+  pollingInterval: Int!
+  importAttempts: Int!
+  cleanAttempts: Int!
+  disableJSONValidation: Boolean!
+}
+
+type ConfigValidation {
+  disableJSONValidation: Boolean!
+  valueColumns: ConfigValidationValueColumns!
+}
+
+type ConfigValidationValueColumns {
+  disableJSONValidation: Boolean!
+}
+
+type ConfigConsul {
+  name: String!
+  healthCheckAddress: String!
+  serviceAddress: String!
+  tags: [String!]!
+  meta: ConfigConsulMeta!
+  healthCheck: ConfigConsulHealthCheck!
+}
+
+type ConfigGraphQL {
+  introspection: Boolean!
+}
+
+type ConfigConsulMeta {
+  apixpertRoute: String!
+  department: String!
+  runtime: String!
+}
+
+type ConfigConsulHealthCheck {
+  enabled: Boolean!
+  interval: String!
+  deregistercriticalserviceafter: String!
+  failuresbeforecritical: Int!
+}
+
+type ConfigMemoryMonitoring {
+  intervalMs: Int!
+  thresholdMb: Int!
+  limitsMb: ConfigMemoryLimit!
+}
+
+type ConfigMemoryLimit {
+  rss: Int!
+  heapTotal: Int!
+  heapUsed: Int!
+  external: Int!
+}
+
+type ConfigMessageBroker {
+  strategy: String!
+}
+
+type Count {
+  binaries(where: BinaryWhereInput): Int!
+  eventDefinitions(where: EventDefinitionWhereInput): Int!
+  exports(where: ExportWhereInput): Int!
+  filters(where: FilterWhereInput): Int!
+  groups(where: GroupWhereInput): Int!
+  hourmeterDatagrams(where: HourmeterDatagramWhereInput): Int!
+  hourmeterThresholds(where: HourmeterThresholdWhereInput): Int!
+  imports(where: ImportWhereInput): Int!
+  machines(where: MachineWhereInput): Int!
+  parameterDefinitions(where: ParameterDefinitionWhereInput): Int!
+  sensors(where: SensorWhereInput): Int!
+  testEnvironments(where: TestEnvironmentWhereInput): Int!
+  testPrograms(where: TestProgramWhereInput): Int!
+  translations(where: TranslationWhereInput): Int!
+  unitTables(where: UnitTableWhereInput): Int!
+  users(where: UserWhereInput): Int!
+  valueColumnDefinitions(where: ValueColumnDefinitionWhereInput): Int!
+  valueTableDefinitions(where: ValueTableDefinitionWhereInput): Int!
+  tests(where: TestWhereInput): Int!
+}
+
+type Error {
+  errorNo: Int
+  moduleId: Int
+  message: String
+  additionalInformation: MixedTypeScalar
+  time: DateType
+}
+
+input ErrorWhereInput {
+  errorNo: Int
+  errorNo_not: Int
+  errorNo_in: [Int!]
+  errorNo_not_in: [Int!]
+  message: String
+  message_not: String
+  message_in: [String!]
+  message_not_in: [String!]
+  additionalInformation: MixedTypeScalar
+  additionalInformation_not: MixedTypeScalar
+  additionalInformation_in: [MixedTypeScalar!]
+  additionalInformation_not_in: [MixedTypeScalar!]
+  additionalInformation_gte: MixedTypeScalar
+  additionalInformation_gt: MixedTypeScalar
+  additionalInformation_lte: MixedTypeScalar
+  additionalInformation_lt: MixedTypeScalar
+  time: DateType
+  time_not: DateType
+  time_gte: DateType
+  time_gt: DateType
+  time_lte: DateType
+  time_lt: DateType
+}
+
+type EventDefinition implements Node & Named {
+  id: ID!
+  nameTextId: String!
+  shortnameTextId: String!
+  commentTextId: String!
+  names(first: Int, last: Int, skip: Int): [RatedTranslation]
+  shortnames(first: Int, last: Int, skip: Int): [RatedTranslation]
+  comments(first: Int, last: Int, skip: Int): [RatedTranslation]
+}
+
+input EventDefinitionWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  OR: [EventDefinitionWhereInput!]
+  AND: [EventDefinitionWhereInput!]
+}
+
+input EventDefinitionOrderByInput {
+  field: EventDefinitionSortField!
+  direction: SortDirection!
+}
+
+enum EventDefinitionSortField {
+  id
+}
+
+type Export implements Node {
+  id: ID!
+  state: String!
+  exportStarted: DateType
+  exportEnded: DateType
+  error: [Error!]
+  progress: Float
+  exportIds: ExportIds
+  user: User!
+  exportSize: Int
+  downloadHref: String!
+  count: ExportAttributeCount!
+}
+
+type ExportIds {
+  binaryIds: [String!]
+  unitTableIds: [String!]
+  parameterDefinitionIds: [String!]
+  eventDefinitionIds: [String!]
+  valueTableDefinitionIds: [String!]
+  valueColumnDefinitionIds: [String!]
+  testIds: [String!]
+  clientConfigurationIds: [String!]
+  testProgramIds: [String!]
+  testEnvironmentIds: [String!]
+  filterIds: [String!]
+  terminologieIds: [String!]
+  translationIds: [String!]
+  hourmeterDatagramIds: [String!]
+  hourmeterThresholdIds: [String!]
+  sensorIds: [String!]
+  machineIds: [String!]
+}
+
+type ExportAttributeCount {
+  error(where: ErrorWhereInput): Int!
+  binaries: Int!
+  clientConfigurations: Int!
+  eventDefinitions: Int!
+  filters: Int!
+  hourmeterDatagrams: Int!
+  hourmeterThresholds: Int!
+  machines: Int!
+  parameterDefinitions: Int!
+  sensors: Int!
+  terminologies: Int!
+  testEnvironments: Int!
+  testPrograms: Int!
+  tests: Int!
+  translations: Int!
+  unitTables: Int!
+  valueColumnDefinitions: Int!
+  valueTableDefinitions: Int!
+}
+
+input ExportWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  state: String
+  state_not: String
+  state_in: [String!]
+  state_not_in: [String!]
+  exportStarted: DateType
+  exportStarted_not: DateType
+  exportStarted_gte: DateType
+  exportStarted_gt: DateType
+  exportStarted_lte: DateType
+  exportStarted_lt: DateType
+  exportEnded: DateType
+  exportEnded_not: DateType
+  exportEnded_gte: DateType
+  exportEnded_gt: DateType
+  exportEnded_lte: DateType
+  exportEnded_lt: DateType
+  error_some: ErrorWhereInput
+  progress: Float
+  progress_not: Float
+  progress_gte: Float
+  progress_gt: Float
+  progress_lte: Float
+  progress_lt: Float
+  user: UserRefWhereInput
+  exportSize: Int
+  exportSize_not: Int
+  exportSize_gte: Int
+  exportSize_gt: Int
+  exportSize_lte: Int
+  exportSize_lt: Int
+  OR: [ExportWhereInput!]
+  AND: [ExportWhereInput!]
+}
+
+input ExportOrderByInput {
+  field: ExportSortField!
+  direction: SortDirection!
+}
+
+enum ExportSortField {
+  id
+  state
+  exportStarted
+  exportEnded
+  progress
+  exportSize
+}
+
+type Filter implements Node & Timestamped & Named {
+  id: ID!
+  modifiedOn: DateType
+  query: String!
+  route: String
+  type: String
+  tags: [String!]!
+  createdOn: DateType
+  nameTextId: String!
+  shortnameTextId: String!
+  commentTextId: String!
+  names(first: Int, last: Int, skip: Int): [RatedTranslation]
+  shortnames(first: Int, last: Int, skip: Int): [RatedTranslation]
+  comments(first: Int, last: Int, skip: Int): [RatedTranslation]
+  user: User
+  owner: Group!
+}
+
+input FilterWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  modifiedOn: DateType
+  modifiedOn_not: DateType
+  modifiedOn_in: [DateType!]
+  modifiedOn_not_in: [DateType!]
+  query: String
+  query_not: String
+  query_in: [String!]
+  query_not_in: [String!]
+  route: String
+  route_not: String
+  route_in: [String!]
+  route_not_in: [String!]
+  type: String
+  type_not: String
+  type_in: [String!]
+  type_not_in: [String!]
+  tags_some: [String!]
+  createdOn: DateType
+  createdOn_not: DateType
+  createdOn_gte: DateType
+  createdOn_gt: DateType
+  createdOn_lte: DateType
+  createdOn_lt: DateType
+  user: UserRefWhereInput
+  owner: OwnerRefWhereInput
+  OR: [FilterWhereInput!]
+  AND: [FilterWhereInput!]
+}
+
+input FilterOrderByInput {
+  field: FilterSortField!
+  direction: SortDirection!
+}
+
+enum FilterSortField {
+  id
+  route
+  type
+  createdOn
+}
+
+type Group implements Node {
+  id: ID!
+  name: String!
+  visibleMenuItems: [String!]
+  executableActions: [String!]
+  legitimateTestProgramIds: [String!]
+}
+
+input GroupWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  visibleMenuItems_some: [String!]
+  executableActions_some: [String!]
+  legitimateTestProgramIds_some: [String!]
+  OR: [GroupWhereInput!]
+  AND: [GroupWhereInput!]
+}
+
+input OwnerRefWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+}
+
+input GroupOrderByInput {
+  field: GroupSortField!
+  direction: SortDirection!
+}
+
+enum GroupSortField {
+  id
+  name
+}
+
+type GroupByValue {
+  binaries(
+    where: BinaryWhereInput
+    keys: [String!]
+    lists: [ListsInput!]
+  ): [GroupResult!]!
+  eventDefinitions(
+    where: EventDefinitionWhereInput
+    keys: [String!]
+    lists: [ListsInput!]
+  ): [GroupResult!]!
+  exports(
+    where: ExportWhereInput
+    keys: [String!]
+    lists: [ListsInput!]
+  ): [GroupResult!]!
+  filters(
+    where: FilterWhereInput
+    keys: [String!]
+    lists: [ListsInput!]
+  ): [GroupResult!]!
+  groups(
+    where: GroupWhereInput
+    keys: [String!]
+    lists: [ListsInput!]
+  ): [GroupResult!]!
+  hourmeterDatagrams(
+    where: HourmeterDatagramWhereInput
+    keys: [String!]
+    lists: [ListsInput!]
+  ): [GroupResult!]!
+  hourmeterThresholds(
+    where: HourmeterThresholdWhereInput
+    keys: [String!]
+    lists: [ListsInput!]
+  ): [GroupResult!]!
+  imports(
+    where: ImportWhereInput
+    keys: [String!]
+    lists: [ListsInput!]
+  ): [GroupResult!]!
+  machines(
+    where: MachineWhereInput
+    keys: [String!]
+    lists: [ListsInput!]
+  ): [GroupResult!]!
+  parameterDefinitions(
+    where: ParameterDefinitionWhereInput
+    keys: [String!]
+    lists: [ListsInput!]
+  ): [GroupResult!]!
+  sensors(
+    where: SensorWhereInput
+    keys: [String!]
+    lists: [ListsInput!]
+  ): [GroupResult!]!
+  tests(
+    where: TestWhereInput
+    keys: [String!]
+    lists: [ListsInput!]
+  ): [GroupResult!]!
+  testEnvironments(
+    where: TestEnvironmentWhereInput
+    keys: [String!]
+    lists: [ListsInput!]
+  ): [GroupResult!]!
+  testPrograms(
+    where: TestProgramWhereInput
+    keys: [String!]
+    lists: [ListsInput!]
+  ): [GroupResult!]!
+  translations(
+    where: TranslationWhereInput
+    keys: [String!]
+    lists: [ListsInput!]
+  ): [GroupResult!]!
+  unitTables(
+    where: UnitTableWhereInput
+    keys: [String!]
+    lists: [ListsInput!]
+  ): [GroupResult!]!
+  users(
+    where: UserWhereInput
+    keys: [String!]
+    lists: [ListsInput!]
+  ): [GroupResult!]!
+  valueColumnDefinitions(
+    where: ValueColumnDefinitionWhereInput
+    keys: [String!]
+    lists: [ListsInput!]
+  ): [GroupResult!]!
+  valueTableDefinitions(
+    where: ValueTableDefinitionWhereInput
+    keys: [String!]
+    lists: [ListsInput!]
+  ): [GroupResult!]!
+}
+
+type GroupResult {
+  key: String!
+  values: [GroupValue!]!
+}
+
+type GroupValue {
+  value: MixedTypeScalar
+  count: Int
+}
+
+"""
+Input type for group by values of objects in lists.
+Use matchAttribute and matchValue to find the correct object in a list.
+Then group by the value of the document's key.
+Example:  Group tests by a specific parameter's value:
+          list: "testParameters"
+          matchAttribute: "id"
+          matchValue: "Zwick.Parameter.Zpf.TestProgramId"
+          key: "value"
+"""
+input ListsInput {
+  """
+  The attribute name which holds the list. E.g. 'testParameters'
+  """
+  list: String
+
+  """
+  Name of the attribute inside the list's document which is used for matching the object. E.g. 'id'
+  """
+  matchAttribute: String
+
+  """
+  Value to match the document in the list. E.g. 'Zwick.Parameter.Zpf.TestProgramId'
+  """
+  matchValue: MixedTypeScalar
+
+  """
+  Group parent documents by the key of the list's document. E.g. 'value'
+  """
+  key: String
+}
+
+type HourmeterDatagram implements Node & Timestamped {
+  id: ID!
+  modifiedOn: DateType
+  sensor: Sensor!
+  createdOn: DateType!
+  hourmeterData(
+    where: DataSchemaWhereInput
+    skip: Int
+    first: Int
+    last: Int
+  ): [DataSchema!]!
+  owner: Group!
+  count: HourmeterDatagramAttributeCount!
+}
+
+type HourmeterDatagramAttributeCount {
+  hourmeterData(where: DataSchemaWhereInput): Int!
+}
+
+input HourmeterDatagramWhereInput {
+  id: ID
+  id_not: ID000000000000
+  id_in: [ID!]
+  id_not_in: [ID!]
+  modifiedOn: DateType
+  modifiedOn_not: DateType
+  modifiedOn_in: [DateType!]
+  modifiedOn_not_in: [DateType!]
+  sensor: VersionedSubentityWhereInput
+  createdOn: DateType
+  createdOn_not: DateType
+  createdOn_gte: DateType
+  createdOn_gt: DateType
+  createdOn_lte: DateType
+  createdOn_lt: DateType
+  hourmeterData_some: DataSchemaWhereInput
+  owner: OwnerRefWhereInput
+  OR: [HourmeterDatagramWhereInput!]
+  AND: [HourmeterDatagramWhereInput!]
+}
+
+type DataSchema {
+  dataType: String!
+  value: MixedTypeScalar!
+}
+
+input DataSchemaWhereInput {
+  dataType: String
+  dataType_not: String
+  dataType_in: [String!]
+  dataType_not_in: [String!]
+  value: MixedTypeScalar
+  value_not: MixedTypeScalar
+  value_in: [MixedTypeScalar!]
+  value_not_in: [MixedTypeScalar!]
+  value_gte: MixedTypeScalar
+  value_gt: MixedTypeScalar
+  value_lte: MixedTypeScalar
+  value_lt: MixedTypeScalar
+  OR: [DataSchemaWhereInput!]
+  AND: [DataSchemaWhereInput!]
+}
+
+enum DataSchemaSortField {
+  dataType
+  value
+}
+
+input HourmeterDatagramOrderByInput {
+  field: HourmeterDatagramSortField!
+  direction: SortDirection!
+  element: OrderByElementInput
+}
+
+enum HourmeterDatagramSortField {
+  id
+  sensorId
+  createdOn
+  hourmeterData
+}
+
+type HourmeterThreshold implements Node & Timestamped {
+  id: ID!
+  modifiedOn: DateType
+  dataType: String!
+  frequency: String
+  readOnly: Boolean
+  messageTextId: String!
+  messages(first: Int, last: Int, skip: Int): [RatedTranslation]
+  sensor: Sensor
+  detectedOn: DateType
+  acknowledgedOn: DateType
+  user: User
+  value: MixedTypeScalar
+  minValue: MixedTypeScalar
+  maxValue: MixedTypeScalar
+  owner: Group!
+}
+
+input HourmeterThresholdWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  modifiedOn: DateType
+  modifiedOn_not: DateType
+  modifiedOn_in: [DateType!]
+  modifiedOn_not_in: [DateType!]
+  dataType: String
+  dataType_not: String
+  dataType_in: [String!]
+  dataType_not_in: [String!]
+  frequency: String
+  frequency_not: String
+  frequency_in: [String!]
+  frequency_not_in: [String!]
+  readOnly: Boolean
+  readOnly_not: Boolean
+  messageTextId: String
+  messageTextId_not: String
+  messageTextId_in: [String!]
+  messageTextId_not_in: [String!]
+  sensor: VersionedSubentityWhereInput
+  detectedOn: DateType
+  detectedOn_not: DateType
+  detectedOn_gte: DateType
+  detectedOn_gt: DateType
+  detectedOn_lte: DateType
+  detectedOn_lt: DateType
+  acknowledgedOn: DateType
+  acknowledgedOn_not: DateType
+  acknowledgedOn_gte: DateType
+  acknowledgedOn_gt: DateType
+  acknowledgedOn_lte: DateType
+  acknowledgedOn_lt: DateType
+  user: UserRefWhereInput
+  value: MixedTypeScalar
+  value_not: MixedTypeScalar
+  value_in: [MixedTypeScalar!]
+  value_not_in: [MixedTypeScalar!]
+  value_gte: MixedTypeScalar
+  value_gt: MixedTypeScalar
+  value_lte: MixedTypeScalar
+  value_lt: MixedTypeScalar
+  minValue: MixedTypeScalar
+  minValue_not: MixedTypeScalar
+  minValue_in: [MixedTypeScalar!]
+  minValue_not_in: [MixedTypeScalar!]
+  minValue_gte: MixedTypeScalar
+  minValue_gt: MixedTypeScalar
+  minValue_lte: MixedTypeScalar
+  minValue_lt: MixedTypeScalar
+  maxValue: MixedTypeScalar
+  maxValue_not: MixedTypeScalar
+  maxValue_in: [MixedTypeScalar!]
+  maxValue_not_in: [MixedTypeScalar!]
+  maxValue_gte: MixedTypeScalar
+  maxValue_gt: MixedTypeScalar
+  maxValue_lte: MixedTypeScalar
+  maxValue_lt: MixedTypeScalar
+  owner: OwnerRefWhereInput
+  OR: [HourmeterThresholdWhereInput!]
+  AND: [HourmeterThresholdWhereInput!]
+}
+
+input HourmeterThresholdOrderByInput {
+  field: HourmeterThresholdSortField!
+  direction: SortDirection!
+}
+
+enum HourmeterThresholdSortField {
+  id
+  dataType
+  frequency
+  readOnly
+  sensorId
+  detectedOn
+  acknowledgedOn
+  value
+  minValue
+  maxValue
+}
+
+type Import implements Node {
+  id: ID!
+  state: String!
+  importStarted: DateType
+  importEnded: DateType
+  error: [Error!]
+  importAttempts: Int
+  progress: Float
+  cleanAttempts: Int
+  owner: Group!
+  user: User!
+  count: ImportAttributeCount!
+}
+
+type ImportAttributeCount {
+  error(where: ErrorWhereInput): Int!
+}
+
+input ImportWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  state: String
+  state_not: String
+  state_in: [String!]
+  state_not_in: [String!]
+  importStarted: DateType
+  importStarted_not: DateType
+  importStarted_gte: DateType
+  importStarted_gt: DateType
+  importStarted_lte: DateType
+  importStarted_lt: DateType
+  importEnded: DateType
+  importEnded_not: DateType
+  importEnded_gte: DateType
+  importEnded_gt: DateType
+  importEnded_lte: DateType
+  importEnded_lt: DateType
+  importAttempts: Int
+  importAttempts_not: Int
+  importAttempts_gte: Int
+  importAttempts_gt: Int
+  importAttempts_lte: Int
+  importAttempts_lt: Int
+  progress: Float
+  progress_not: Float
+  progress_gte: Float
+  progress_gt: Float
+  progress_lte: Float
+  progress_lt: Float
+  cleanAttempts: Int
+  cleanAttempts_not: Int
+  cleanAttempts_gte: Int
+  cleanAttempts_gt: Int
+  cleanAttempts_lte: Int
+  cleanAttempts_lt: Int
+  owner: OwnerRefWhereInput
+  user: UserRefWhereInput
+  OR: [ImportWhereInput!]
+  AND: [ImportWhereInput!]
+}
+
+input ImportOrderByInput {
+  field: ImportSortField!
+  direction: SortDirection!
+}
+
+enum ImportSortField {
+  id
+  state
+  importStarted
+  importEnded
+  importAttempts
+  progress
+  cleanAttempts
+}
+
+type Info {
+  storageInfo: StorageInfo
+  version: StorageInfoVersion
+  debuglog: String
+  productionlog: String
+}
+
+type StorageInfo {
+  app: StorageInfoApp
+  host: String
+  port: Int
+  status: String
+  updateProgress: Float
+  errors: [Error!]
+  binaryDataFolder: String
+  database: StorageInfoUri
+  headersTimeout: Int
+  requestTimeout: Int
+  idleRequestConnectionTimeout: Int
+  lockWaitTimeout: Int
+  log: StorageInfoLog
+  bodyParser: StorageInfoBodyParser
+  formatResponseJSON: Boolean
+  auth: StorageInfoAuth
+  import: StorageInfoImportInfo
+  validation: StorageInfoValidation
+}
+
+type StorageInfoApp {
+  name: String
+  version: String
+}
+
+type StorageInfoUri {
+  uri: String
+}
+
+type StorageInfoLog {
+  level: String
+  directory: String
+  timestampFormat: String
+}
+
+type StorageInfoBodyParser {
+  limit: String
+}
+
+type StorageInfoAuth {
+  maxCacheSize: Int
+  failedLoginAttempts: Int
+}
+
+type StorageInfoImportInfo {
+  tempFolder: String
+  jobExpiry: Int
+  tokenExpiry: Int
+  pollingInterval: Int
+  importAttempts: Int
+  cleanAttempts: Int
+  disableJSONValidation: Boolean
+}
+
+type StorageInfoValidation {
+  disableJSONValidation: Boolean
+  valueColumns: StorageInfoValueColumnsValidation
+}
+
+type StorageInfoValueColumnsValidation {
+  disableJSONValidation: Boolean
+}
+
+type StorageInfoVersion {
+  version: String
+  description: String
+}
+
+type Machine implements Node & Timestamped {
+  id: ID!
+  modifiedOn: DateType
+  serialNumber: String
+  sensors(
+    where: SensorWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [SensorOrderByInput!]
+  ): [Sensor!]
+  type: Int
+  owner: Group!
+  count: MachineAttributeCount!
+}
+
+type MachineAttributeCount {
+  sensors: Int!
+}
+
+input MachineWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  modifiedOn: DateType
+  modifiedOn_not: DateType
+  modifiedOn_in: [DateType!]
+  modifiedOn_not_in: [DateType!]
+  serialNumber: String
+  serialNumber_not: String
+  serialNumber_in: [String!]
+  serialNumber_not_in: [String!]
+  sensors_some: [SomeRefWhereInput!]
+  type: Int
+  type_not: Int
+  type_gte: Int
+  type_gt: Int
+  type_lte: Int
+  type_lt: Int
+  owner: OwnerRefWhereInput
+  OR: [MachineWhereInput!]
+  AND: [MachineWhereInput!]
+}
+
+input MachineOrderByInput {
+  field: MachineSortField!
+  direction: SortDirection!
+  element: OrderByElementInput
+}
+
+enum MachineSortField {
+  id
+  serialNumber
+  type
+}
+
+type Parameter implements Node & Timestamped & Named {
+  id: ID!
+  modifiedOn: DateType
+  nameTextId: String!
+  shortnameTextId: String!
+  commentTextId: String!
+  names(first: Int, last: Int, skip: Int): [RatedTranslation]
+  shortnames(first: Int, last: Int, skip: Int): [RatedTranslation]
+  comments(first: Int, last: Int, skip: Int): [RatedTranslation]
+  value: MixedTypeScalar
+  type: String
+  isValueEditable: Boolean
+  isVisible: Boolean
+  isDirty: Boolean
+  isActivatable: Boolean
+  isActive: Boolean
+  isActivationEditable: Boolean
+  picture: String
+  sortIndex: Int
+  measuredValues: [Float!]
+  valueCalculationMethod: String
+  lowerLimit: Float
+  lowerLimitExcluded: Boolean
+  upperLimit: Float
+  upperLimitExcluded: Boolean
+  unitTable: UnitTable
+  isUnitEditable: Boolean
+  referenceChannelId: String
+  possibleReferenceChannelIds: [String!]
+  isValueReferenceEditable: Boolean
+  valueReferenceType: String
+  tolerance: Tolerance
+  plausibility: Tolerance
+  texts: [SelectionText!]
+}
+
+type SelectionText {
+  key: MixedTypeScalar!
+  nameTextId: String!
+  shortnameTextId: String!
+  commentTextId: String!
+  names(first: Int, last: Int, skip: Int): [RatedTranslation!]
+  shortnames(first: Int, last: Int, skip: Int): [RatedTranslation!]
+  comments(first: Int, last: Int, skip: Int): [RatedTranslation!]
+}
+
+input ParameterToleranceWhereInput {
+  upperLimit: Float
+  upperLimit_not: Float
+  upperLimit_gt: Float
+  upperLimit_gte: Float
+  upperLimit_lt: Float
+  upperLimit_lte: Float
+  lowerLimit: Float
+  lowerLimit_not: Float
+  lowerLimit_gt: Float
+  lowerLimit_gte: Float
+  lowerLimit_lt: Float
+  lowerLimit_lte: Float
+  target: Float
+  target_not: Float
+  target_gt: Float
+  target_gte: Float
+  target_lt: Float
+  target_lte: Float
+}
+
+input ParameterWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID]
+  id_not_in: [ID]
+  modifiedOn: DateType
+  modifiedOn_not: DateType
+  modifiedOn_in: [DateType]
+  modifiedOn_not_in: [DateType]
+  value: MixedTypeScalar
+  value_not: MixedTypeScalar
+  value_in: [MixedTypeScalar]
+  value_not_in: [MixedTypeScalar]
+  value_gt: MixedTypeScalar
+  value_gte: MixedTypeScalar
+  value_lt: MixedTypeScalar
+  value_lte: MixedTypeScalar
+  type: String
+  type_not: String
+  type_in: [String]
+  type_not_in: [String]
+  isValueEditable: Boolean
+  isValueEditable_not: Boolean
+  isVisible: Boolean
+  isVisible_not: Boolean
+  isDirty: Boolean
+  isDirty_not: Boolean
+  isActivatable: Boolean
+  isActivatable_not: Boolean
+  isActive: Boolean
+  isActive_not: Boolean
+  isActivationEditable: Boolean
+  isActivationEditable_not: Boolean
+  picture: String
+  picture_not: String
+  picture_in: [String]
+  picture_not_in: [String]
+  sortIndex: Int
+  sortIndex_not: Int
+  sortIndex_gt: Int
+  sortIndex_gte: Int
+  sortIndex_lt: Int
+  sortIndex_lte: Int
+  measuredValues_some: [Float]
+  valueCalculationMethod: String
+  valueCalculationMethod_not: String
+  valueCalculationMethod_in: [String]
+  valueCalculationMethod_not_in: [String]
+  lowerLimit: Float
+  lowerLimit_not: Float
+  lowerLimit_gt: Float
+  lowerLimit_gte: Float
+  lowerLimit_lt: Float
+  lowerLimit_lte: Float
+  lowerLimitExcluded: Boolean
+  lowerLimitExcluded_not: Boolean
+  upperLimit: Float
+  upperLimit_not: Float
+  upperLimit_gt: Float
+  upperLimit_gte: Float
+  upperLimit_lt: Float
+  upperLimit_lte: Float
+  upperLimitExcluded: Boolean
+  upperLimitExcluded_not: Boolean
+  unitTableId: String
+  unitTableId_not: String
+  unitTableId_in: [String]
+  unitTableId_not_in: [String]
+  isUnitEditable: Boolean
+  isUnitEditable_not: Boolean
+  referenceChannelId: String
+  referenceChannelId_not: String
+  referenceChannelId_in: [String]
+  referenceChannelId_not_in: [String]
+  isValueReferenceEditable: Boolean
+  isValueReferenceEditable_not: Boolean
+  possibleReferenceChannelIds_some: [String]
+  valueReferenceType: String
+  valueReferenceType_not: String
+  valueReferenceType_in: [String]
+  valueReferenceType_not_in: [String]
+  tolerance: ParameterToleranceWhereInput
+  plausibility: ParameterToleranceWhereInput
+  OR: [ParameterWhereInput!]
+  AND: [ParameterWhereInput!]
+}
+
+input ParameterOrderByInput {
+  field: ParameterSortField!
+  direction: SortDirection!
+}
+
+enum ParameterSortField {
+  id
+  value
+}
+
+input MeasuredValuesWhereInput {
+  measuredValues: Float
+  measuredValues_not: Float
+  measuredValues_gt: Float
+  measuredValues_gte: Float
+  measuredValues_lt: Float
+  measuredValues_lte: Float
+}
+
+type ParameterDefinition implements Node & Named {
+  id: ID!
+  nameTextId: String!
+  shortnameTextId: String!
+  commentTextId: String!
+  names(first: Int, last: Int, skip: Int): [RatedTranslation]
+  shortnames(first: Int, last: Int, skip: Int): [RatedTranslation]
+  comments(first: Int, last: Int, skip: Int): [RatedTranslation]
+  unitTable: UnitTable
+}
+
+input ParameterDefinitionWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  unitTableId: String
+  unitTableId_not: String
+  unitTableId_in: [String!]
+  unitTableId_not_in: [String!]
+  OR: [ParameterDefinitionWhereInput!]
+  AND: [ParameterDefinitionWhereInput!]
+}
+
+input ParameterDefinitionOrderByInput {
+  field: ParameterDefinitionField!
+  direction: SortDirection!
+}
+
+enum ParameterDefinitionField {
+  id
+  unitTableId
+}
+
+type Query {
+  binaries(
+    where: BinaryWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [BinaryOrderByInput!]
+  ): [Binary!]!
+  clientConfigurations(
+    where: ClientConfigurationWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [ClientConfigurationOrderByInput!]
+  ): [ClientConfiguration!]!
+  config: Config!
+  count: Count!
+  eventDefinitions(
+    where: EventDefinitionWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [EventDefinitionOrderByInput!]
+  ): [EventDefinition!]!
+  exports(
+    where: ExportWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [ExportOrderByInput!]
+  ): [Export!]!
+  filters(
+    where: FilterWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [FilterOrderByInput!]
+  ): [Filter!]!
+  groupByValue: GroupByValue!
+  groups(
+    where: GroupWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [GroupOrderByInput!]
+  ): [Group!]!
+  hourmeterDatagrams(
+    where: HourmeterDatagramWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [HourmeterDatagramOrderByInput!]
+  ): [HourmeterDatagram!]!
+  hourmeterThresholds(
+    where: HourmeterThresholdWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [HourmeterThresholdOrderByInput!]
+  ): [HourmeterThreshold!]!
+  imports(
+    where: ImportWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [ImportOrderByInput!]
+  ): [Import!]!
+  info: Info
+  machines(
+    where: MachineWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [MachineOrderByInput!]
+  ): [Machine!]!
+  parameterDefinitions(
+    where: ParameterDefinitionWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [ParameterDefinitionOrderByInput!]
+  ): [ParameterDefinition!]!
+  sensors(
+    where: SensorWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [SensorOrderByInput!]
+  ): [Sensor!]!
+  testEnvironments(
+    where: TestEnvironmentWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [TestEnvironmentOrderByInput!]
+  ): [TestEnvironment!]!
+  testParameters(
+    where: ParameterWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [ParameterOrderByInput!]
+  ): [Parameter!]!
+  testPrograms(
+    where: TestProgramWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [TestProgramOrderByInput!]
+  ): [TestProgram!]!
+  tests(
+    where: TestWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [TestOrderByInput!]
+  ): [Test!]
+  translations(
+    where: TranslationWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [TranslationOrderByInput!]
+  ): [Translation!]!
+  unitTables(
+    where: UnitTableWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [UnitTableOrderByInput!]
+  ): [UnitTable!]!
+  users(
+    where: UserWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [UserOrderByInput!]
+  ): [User!]!
+  valueColumnDefinitions(
+    where: ValueColumnDefinitionWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [ValueColumnDefinitionOrderByInput!]
+  ): [ValueColumnDefinition!]!
+  valueTableDefinitions(
+    where: ValueTableDefinitionWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [ValueTableDefinitionOrderByInput!]
+  ): [ValueTableDefinition!]!
+}
+
+"""
+This scalar type can be string, int, float or boolean
+"""
+scalar MixedTypeScalar
+
+"""
+DateType custom scalar type
+"""
+scalar DateType
+
+type Sensor implements Node & Timestamped & Versioned {
+  id: ID!
+  modifiedOn: DateType
+  serialNumber: String
+  type: Int!
+  version: String!
+  eepromTokens: [Eeprom!]
+  sensorData: [Measurement!]
+  calibrationData: [Measurement!]
+  measurementUncertaintyData: [Measurement!]
+  owner: Group!
+  versions(skip: Int, first: Int, last: Int): [Sensor!]
+  count: SensorAttributeCount!
+}
+
+type SensorAttributeCount {
+  eepromTokens(where: EepromWhereInput): Int!
+  sensorData(where: MeasurementWhereInput): Int!
+  calibrationData(where: MeasurementWhereInput): Int!
+  measurementUncertaintyData(where: MeasurementWhereInput): Int!
+}
+
+input SensorWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  modifiedOn: DateType
+  modifiedOn_not: DateType
+  modifiedOn_in: [DateType!]
+  modifiedOn_not_in: [DateType!]
+  serialNumber: String
+  serialNumber_not: String
+  serialNumber_in: [String!]
+  serialNumber_not_in: [String!]
+  type: Int
+  type_not: Int
+  type_gt: Int
+  type_gte: Int
+  type_lt: Int
+  type_lte: Int
+  version: String
+  version_not: String
+  version_in: [String!]
+  version_not_in: [String!]
+  eepromTokens_some: EepromWhereInput
+  sensorData_some: MeasurementWhereInput
+  calibrationData_some: MeasurementWhereInput
+  measurementUncertaintyData_some: MeasurementWhereInput
+  owner: OwnerRefWhereInput
+  OR: [SensorWhereInput!]
+  AND: [SensorWhereInput!]
+}
+
+type Eeprom implements Node {
+  id: ID!
+  value: MixedTypeScalar
+}
+
+input EepromWhereInput {
+  id: Int
+  id_not: Int
+  id_in: [Int!]
+  id_not_in: [Int!]
+  value: MixedTypeScalar
+  value_not: MixedTypeScalar
+  value_in: [MixedTypeScalar!]
+  value_not_in: [MixedTypeScalar!]
+  value_gte: MixedTypeScalar
+  value_gt: MixedTypeScalar
+  value_lte: MixedTypeScalar
+  value_lt: MixedTypeScalar
+}
+
+type Measurement implements Node {
+  id: ID!
+  value: String!
+}
+
+input MeasurementWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  value: String
+  value_not: String
+  value_in: [String!]
+  value_not_in: [String!]
+}
+
+input SensorOrderByInput {
+  field: SensorSortField!
+  direction: SortDirection!
+}
+
+enum SensorSortField {
+  id
+  serialNumber
+  type
+  version
+}
+
+type Test implements Node & Timestamped & Versioned & Named {
+  id: ID!
+  version: String!
+  createdOn: DateType!
+  deletedOn: DateType
+  modifiedOn: DateType
+  testStarted: DateType
+  testStopped: DateType
+  nameTextId: String!
+  shortnameTextId: String!
+  commentTextId: String!
+  names(first: Int, last: Int, skip: Int): [RatedTranslation]
+  shortnames(first: Int, last: Int, skip: Int): [RatedTranslation]
+  comments(first: Int, last: Int, skip: Int): [RatedTranslation]
+  state: String!
+  testParameters(
+    where: ParameterWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [ParameterOrderByInput!]
+  ): [Parameter!]!
+  valueTables(
+    where: ValueTableWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [ValueTableOrderByInput!]
+  ): [ValueTable!]!
+  valueColumns(
+    where: ValueColumnWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [ValueColumnOrderByInput!]
+  ): [ValueColumn!]!
+  events(
+    where: EventWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [EventOrderByInput!]
+  ): [Event!]!
+  versions(skip: Int, first: Int, last: Int): [Test!]
+  machineConfigurationInfo: MachineConfigurationInfo
+  testEnvironment: TestEnvironment
+  tester: User
+  testProgram: TestProgram
+  mediaData(
+    where: BinaryWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [BinaryOrderByInput!]
+  ): [Binary!]
+  nativeTestData: Binary
+  clientAppType: String
+  tags: [String!]
+  owner: Group
+  count: TestAttributeCount!
+}
+
+type ValueTable implements Node & Timestamped & Named {
+  id: ID!
+  modifiedOn: DateType
+  nameTextId: String!
+  shortnameTextId: String!
+  commentTextId: String!
+  names(first: Int, last: Int, skip: Int): [RatedTranslation]
+  shortnames(first: Int, last: Int, skip: Int): [RatedTranslation]
+  comments(first: Int, last: Int, skip: Int): [RatedTranslation]
+}
+
+"""
+Value columns are grouped by a ValueTable
+"""
+type ValueColumn implements Node & Timestamped & Named {
+  """
+  id of the value column
+  """
+  id: ID!
+  valueTableId: String!
+  firstValue: Float
+  lastValue: Float
+  length: Int
+  unitTable: UnitTable
+  binaryHref: String
+  modifiedOn: DateType
+  segments: [Segment]
+  tolerance: Tolerance
+  plausibility: Tolerance
+  nameTextId: String!
+  shortnameTextId: String!
+  commentTextId: String!
+  names(first: Int, last: Int, skip: Int): [RatedTranslation]
+  shortnames(first: Int, last: Int, skip: Int): [RatedTranslation]
+  comments(first: Int, last: Int, skip: Int): [RatedTranslation]
+}
+
+type Event implements Node & Timestamped & Named {
+  id: ID!
+  length: Int
+  binaryHref: String
+  modifiedOn: DateType
+  segments: [Segment]
+  nameTextId: String!
+  shortnameTextId: String!
+  commentTextId: String!
+  names(first: Int, last: Int, skip: Int): [RatedTranslation]
+  shortnames(first: Int, last: Int, skip: Int): [RatedTranslation]
+  comments(first: Int, last: Int, skip: Int): [RatedTranslation]
+}
+
+type MachineConfigurationInfo {
+  modifiedOn: DateType
+  machines(
+    where: MachineWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [MachineOrderByInput!]
+  ): [Machine!]
+}
+
+type TestAttributeCount {
+  testParameters(where: ParameterWhereInput): Int!
+  valueTables(where: ValueTableWhereInput): Int!
+  valueColumns(where: ValueColumnWhereInput): Int!
+  events(where: EventWhereInput): Int!
+}
+
+type Segment {
+  label: SegmentLabel!
+  source: SegmentSource!
+  fromKey: Float!
+  toKey: Float
+}
+
+input TestWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  modifiedOn: DateType
+  modifiedOn_not: DateType
+  modifiedOn_in: [DateType!]
+  modifiedOn_not_in: [DateType!]
+  version: String
+  version_not: String
+  version_in: [String!]
+  version_not_in: [String!]
+  createdOn: DateType
+  createdOn_not: DateType
+  createdOn_gte: DateType
+  createdOn_gt: DateType
+  createdOn_lte: DateType
+  createdOn_lt: DateType
+  deletedOn: DateType
+  deletedOn_not: DateType
+  deletedOn_gte: DateType
+  deletedOn_gt: DateType
+  deletedOn_lte: DateType
+  deletedOn_lt: DateType
+  testStarted: DateType
+  testStarted_not: DateType
+  testStarted_gte: DateType
+  testStarted_gt: DateType
+  testStarted_lte: DateType
+  testStarted_lt: DateType
+  testStopped: DateType
+  testStopped_not: DateType
+  testStopped_gte: DateType
+  testStopped_gt: DateType
+  testStopped_lte: DateType
+  testStopped_lt: DateType
+  state: String
+  state_not: String
+  state_in: [String!]
+  state_not_in: [String!]
+  testParameters_some: ParameterWhereInput
+  valueTables_some: ValueTableWhereInput
+  valueColumns_some: ValueColumnWhereInput
+  events_some: EventWhereInput
+  machineConfigurationInfo: MachineConfigurationInfoWhereInput
+  tester: TesterWhereInput
+  testProgram: VersionedSubentityWhereInput
+  testEnvironment: VersionedSubentityWhereInput
+  mediaData_some: [VersionedSomeRefWhereInput!]
+  nativeTestData: VersionedSubentityWhereInput
+  clientAppType: String
+  clientAppType_not: String
+  clientAppType_in: [String!]
+  clientAppType_not_in: [String!]
+  tags_some: [String!]
+  owner: OwnerRefWhereInput
+  OR: [TestWhereInput!]
+  AND: [TestWhereInput!]
+}
+
+input ValueTableWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  OR: [ValueTableWhereInput!]
+  AND: [ValueTableWhereInput!]
+}
+
+input ValueColumnWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  unitTableId: String
+  unitTableId_not: String
+  unitTableId_in: [String!]
+  unitTableId_not_in: [String!]
+  firstValue: Float
+  firstValue_not: Float
+  firstValue_in: [Float!]
+  firstValue_not_in: [Float!]
+  firstValue_lt: Float
+  firstValue_lte: Float
+  firstValue_gt: Float
+  firstValue_gte: Float
+  lastValue: Float
+  lastValue_not: Float
+  lastValue_in: [Float!]
+  lastValue_not_in: [Float!]
+  lastValue_lt: Float
+  lastValue_lte: Float
+  lastValue_gt: Float
+  lastValue_gte: Float
+  length: Int
+  length_not: Int
+  length_in: [Int!]
+  length_not_in: [Int!]
+  length_lt: Int
+  length_lte: Int
+  length_gt: Int
+  length_gte: Int
+  OR: [ValueColumnWhereInput!]
+  AND: [ValueColumnWhereInput!]
+}
+
+input EventWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  length: Int
+  length_not: Int
+  length_in: [Int!]
+  length_not_in: [Int!]
+  length_lt: Int
+  length_lte: Int
+  length_gt: Int
+  length_gte: Int
+  OR: [EventWhereInput!]
+  AND: [EventWhereInput!]
+}
+
+input MachineConfigurationInfoWhereInput {
+  machines_some: [SomeRefWhereInput!]
+  OR: [MachineConfigurationInfoWhereInput!]
+  AND: [MachineConfigurationInfoWhereInput!]
+}
+
+input TesterWhereInput {
+  id: String
+  id_not: String
+  id_in: [String!]
+  id_not_in: [String!]
+  OR: [TesterWhereInput!]
+  AND: [TesterWhereInput!]
+}
+
+input TestOrderByInput {
+  field: TestSortField!
+  direction: SortDirection!
+  element: OrderByElementInput
+}
+
+input ValueTableOrderByInput {
+  field: ValueTableSortField!
+  direction: SortDirection!
+}
+
+input ValueColumnOrderByInput {
+  field: ValueColumnSortField!
+  direction: SortDirection!
+}
+
+input EventOrderByInput {
+  field: EventSortField!
+  direction: SortDirection!
+}
+
+enum TestSortField {
+  id
+  version
+  createdOn
+  testStarted
+  state
+  testParameters
+  valueTables
+  valueColumns
+  events
+}
+
+enum ValueTableSortField {
+  id
+}
+
+enum ValueColumnSortField {
+  id
+  valueTableId
+  firstValue
+  lastValue
+  length
+}
+
+enum EventSortField {
+  id
+  length
+}
+
+enum SegmentLabel {
+  valid
+  invalid
+  ignore
+}
+
+enum SegmentSource {
+  system
+  testprogram
+}
+
+type TestEnvironment implements Node & Timestamped & Named & Versioned {
+  id: ID!
+  modifiedOn: DateType
+  version: String!
+  nameTextId: String!
+  shortnameTextId: String!
+  commentTextId: String!
+  names(first: Int, last: Int, skip: Int): [RatedTranslation]
+  shortnames(first: Int, last: Int, skip: Int): [RatedTranslation]
+  comments(first: Int, last: Int, skip: Int): [RatedTranslation]
+  clientAppType: String
+  data: Binary
+  machines(
+    where: MachineWhereInput
+    skip: Int
+    first: Int
+    last: Int
+    orderBy: [MachineOrderByInput!]
+  ): [Machine!]
+  owner: Group!
+  versions(skip: Int, first: Int, last: Int): [TestEnvironment!]
+  count: TestEnvironmentAttributeCount!
+}
+
+type TestEnvironmentAttributeCount {
+  machines: Int!
+}
+
+input TestEnvironmentWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  modifiedOn: DateType
+  modifiedOn_not: DateType
+  modifiedOn_in: [DateType!]
+  modifiedOn_not_in: [DateType!]
+  version: String
+  version_not: String
+  version_in: [String!]
+  version_not_in: [String!]
+  clientAppType: String
+  clientAppType_not: String
+  clientAppType_in: [String!]
+  clientAppType_not_in: [String!]
+  data: VersionedSubentityWhereInput
+  machines_some: [SomeRefWhereInput!]
+  owner: OwnerRefWhereInput
+  OR: [TestEnvironmentWhereInput!]
+  AND: [TestEnvironmentWhereInput!]
+}
+
+input TestEnvironmentOrderByInput {
+  field: TestEnvironmentSortField!
+  direction: SortDirection!
+  element: OrderByElementInput
+}
+
+enum TestEnvironmentSortField {
+  id
+  version
+}
+
+type TestProgram implements Node & Timestamped & Named & Versioned {
+  id: ID!
+  modifiedOn: DateType
+  version: String!
+  clientAppVersion: String
+  clientAppType: String
+  nameTextId: String!
+  shortnameTextId: String!
+  commentTextId: String!
+  names(first: Int, last: Int, skip: Int): [RatedTranslation]
+  shortnames(first: Int, last: Int, skip: Int): [RatedTranslation]
+  comments(first: Int, last: Int, skip: Int): [RatedTranslation]
+  licenseKey: String
+  supportedMachineTypes: [String!]
+  data: Binary
+  preview: Binary
+  testProgram: TestProgram
+  owner: Group!
+  user: User
+  createdOn: DateType!
+  versions(skip: Int, first: Int, last: Int): [TestProgram!]
+}
+
+input TestProgramWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  modifiedOn: DateType
+  modifiedOn_not: DateType
+  modifiedOn_in: [DateType!]
+  modifiedOn_not_in: [DateType!]
+  version: String
+  version_not: String
+  version_in: [String!]
+  version_not_in: [String!]
+  clientAppVersion: String
+  clientAppVersion_not: String
+  clientAppVersion_in: [String!]
+  clientAppVersion_not_in: [String!]
+  clientAppType: String
+  clientAppType_not: String
+  clientAppType_in: [String!]
+  clientAppType_not_in: [String!]
+  licenseKey: String
+  licenseKey_not: String
+  licenseKey_in: [String!]
+  licenseKey_not_in: [String!]
+  supportedMachineTypes_some: [String!]
+  data: VersionedSubentityWhereInput
+  preview: VersionedSubentityWhereInput
+  testProgram: VersionedSubentityWhereInput
+  owner: OwnerRefWhereInput
+  user: UserRefWhereInput
+  createdOn: DateType
+  createdOn_not: DateType
+  createdOn_gte: DateType
+  createdOn_gt: DateType
+  createdOn_lte: DateType
+  createdOn_lt: DateType
+  OR: [TestProgramWhereInput!]
+  AND: [TestProgramWhereInput!]
+}
+
+input TestProgramOrderByInput {
+  field: TestProgramSortField!
+  direction: SortDirection!
+}
+
+enum TestProgramSortField {
+  id
+  version
+  clientAppVersion
+  clientAppType
+  testProgramId
+  createdOn
+}
+
+type Terminology {
+  sourceId: String!
+  targetId: String!
+  machineType: String
+  industry: String
+  testProgramId: String
+  testType: String
+}
+
+type RatedTranslation {
+  text: String!
+  language: LanguageCode!
+  matchRate: Int!
+  terminology: Terminology
+}
+
+type Translation implements Node {
+  id: ID!
+  owner: Group!
+  dev: String
+  ab: String
+  aa: String
+  af: String
+  ak: String
+  sq: String
+  am: String
+  ar: String
+  an: String
+  hy: String
+  as: String
+  av: String
+  ae: String
+  ay: String
+  az: String
+  bm: String
+  ba: String
+  eu: String
+  be: String
+  bn: String
+  bh: String
+  bi: String
+  nb: String
+  bs: String
+  br: String
+  bg: String
+  my: String
+  es: String
+  ca: String
+  km: String
+  ch: String
+  ce: String
+  ny: String
+  zh: String
+  za: String
+  cu: String
+  cv: String
+  kw: String
+  co: String
+  cr: String
+  hr: String
+  cs: String
+  da: String
+  dv: String
+  nl: String
+  dz: String
+  en: String
+  eo: String
+  et: String
+  ee: String
+  fo: String
+  fj: String
+  fi: String
+  fr: String
+  ff: String
+  gd: String
+  gl: String
+  lg: String
+  ka: String
+  de: String
+  ki: String
+  el: String
+  kl: String
+  gn: String
+  gu: String
+  ht: String
+  ha: String
+  he: String
+  hz: String
+  hi: String
+  ho: String
+  hu: String
+  is: String
+  io: String
+  ig: String
+  ia: String
+  ie: String
+  iu: String
+  ik: String
+  ga: String
+  it: String
+  ja: String
+  jv: String
+  kn: String
+  kr: String
+  ks: String
+  kk: String
+  rw: String
+  ky: String
+  kv: String
+  kg: String
+  ko: String
+  kj: String
+  ku: String
+  lo: String
+  la: String
+  lv: String
+  lb: String
+  li: String
+  ln: String
+  lt: String
+  lu: String
+  mk: String
+  mg: String
+  ms: String
+  ml: String
+  mt: String
+  gv: String
+  mi: String
+  mr: String
+  mh: String
+  ro: String
+  mn: String
+  na: String
+  nv: String
+  nd: String
+  nr: String
+  ng: String
+  ne: String
+  se: String
+  no: String
+  nn: String
+  ii: String
+  oc: String
+  oj: String
+  or: String
+  om: String
+  os: String
+  pi: String
+  pa: String
+  ps: String
+  fa: String
+  pl: String
+  pt: String
+  qu: String
+  rm: String
+  rn: String
+  ru: String
+  sm: String
+  sg: String
+  sa: String
+  sc: String
+  sr: String
+  sn: String
+  sd: String
+  si: String
+  sk: String
+  sl: String
+  so: String
+  st: String
+  su: String
+  sw: String
+  ss: String
+  sv: String
+  tl: String
+  ty: String
+  tg: String
+  ta: String
+  tt: String
+  te: String
+  th: String
+  bo: String
+  ti: String
+  to: String
+  ts: String
+  tn: String
+  tr: String
+  tk: String
+  tw: String
+  ug: String
+  uk: String
+  ur: String
+  uz: String
+  ve: String
+  vi: String
+  vo: String
+  wa: String
+  cy: String
+  fy: String
+  wo: String
+  xh: String
+  yi: String
+  yo: String
+  zu: String
+}
+
+input TranslationWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  owner: OwnerRefWhereInput
+  OR: [TranslationWhereInput!]
+  AND: [TranslationWhereInput!]
+}
+
+input TranslationOrderByInput {
+  field: TranslationSortField!
+  direction: SortDirection!
+}
+
+enum TranslationSortField {
+  id
+}
+
+enum LanguageCode {
+  dev
+  ab
+  aa
+  af
+  ak
+  sq
+  am
+  ar
+  an
+  hy
+  as
+  av
+  ae
+  ay
+  az
+  bm
+  ba
+  eu
+  be
+  bn
+  bh
+  bi
+  nb
+  bs
+  br
+  bg
+  my
+  es
+  ca
+  km
+  ch
+  ce
+  ny
+  zh
+  za
+  cu
+  cv
+  kw
+  co
+  cr
+  hr
+  cs
+  da
+  dv
+  nl
+  dz
+  en
+  eo
+  et
+  ee
+  fo
+  fj
+  fi
+  fr
+  ff
+  gd
+  gl
+  lg
+  ka
+  de
+  ki
+  el
+  kl
+  gn
+  gu
+  ht
+  ha
+  he
+  hz
+  hi
+  ho
+  hu
+  is
+  io
+  ig
+  ia
+  ie
+  iu
+  ik
+  ga
+  it
+  ja
+  jv
+  kn
+  kr
+  ks
+  kk
+  rw
+  ky
+  kv
+  kg
+  ko
+  kj
+  ku
+  lo
+  la
+  lv
+  lb
+  li
+  ln
+  lt
+  lu
+  mk
+  mg
+  ms
+  ml
+  mt
+  gv
+  mi
+  mr
+  mh
+  ro
+  mn
+  na
+  nv
+  nd
+  nr
+  ng
+  ne
+  se
+  no
+  nn
+  ii
+  oc
+  oj
+  or
+  om
+  os
+  pi
+  pa
+  ps
+  fa
+  pl
+  pt
+  qu
+  rm
+  rn
+  ru
+  sm
+  sg
+  sa
+  sc
+  sr
+  sn
+  sd
+  si
+  sk
+  sl
+  so
+  st
+  su
+  sw
+  ss
+  sv
+  tl
+  ty
+  tg
+  ta
+  tt
+  te
+  th
+  bo
+  ti
+  to
+  ts
+  tn
+  tr
+  tk
+  tw
+  ug
+  uk
+  ur
+  uz
+  ve
+  vi
+  vo
+  wa
+  cy
+  fy
+  wo
+  xh
+  yi
+  yo
+  zu
+}
+
+type UnitTable implements Node & Timestamped & Named {
+  id: ID!
+  modifiedOn: DateType
+  nameTextId: String!
+  shortnameTextId: String!
+  commentTextId: String!
+  names(first: Int, last: Int, skip: Int): [RatedTranslation]
+  shortnames(first: Int, last: Int, skip: Int): [RatedTranslation]
+  comments(first: Int, last: Int, skip: Int): [RatedTranslation]
+  baseUnit: Unit!
+  units: [Unit!]
+  unitTables: [UnitTableReference!]
+  owner: Group!
+  count: UnitTableAttributeCount!
+}
+
+type Unit implements Node & Timestamped & Named {
+  id: ID!
+  modifiedOn: DateType
+  nameTextId: String!
+  shortnameTextId: String!
+  commentTextId: String!
+  names(first: Int, last: Int, skip: Int): [RatedTranslation]
+  shortnames(first: Int, last: Int, skip: Int): [RatedTranslation]
+  comments(first: Int, last: Int, skip: Int): [RatedTranslation]
+  factor: Float
+  offset: Float
+}
+
+type UnitTableAttributeCount {
+  units(where: UnitWhereInput): Int!
+  unitTables(where: UnitTableWhereInput): Int!
+}
+
+input UnitWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  modifiedOn: DateType
+  modifiedOn_not: DateType
+  modifiedOn_in: [DateType!]
+  modifiedOn_not_in: [DateType!]
+  factor: Float
+  factor_not: Float
+  factor_gt: Float
+  factor_gte: Float
+  factor_lt: Float
+  factor_lte: Float
+  offset: Float
+  offset_not: Float
+  offset_gt: Float
+  offset_gte: Float
+  offset_lt: Float
+  offset_lte: Float
+  OR: [UnitWhereInput!]
+  AND: [UnitWhereInput!]
+}
+
+type UnitTableReference {
+  unitTable: UnitTable
+  type: String
+}
+
+input UnitTableSomeRefWhereInput {
+  id: String
+  type: String
+}
+
+input UnitTableWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  modifiedOn: DateType
+  modifiedOn_not: DateType
+  modifiedOn_in: [DateType!]
+  modifiedOn_not_in: [DateType!]
+  baseUnit: UnitReferenceWhereInput
+  units_some: UnitWhereInput
+  unitTables_some: [UnitTableSomeRefWhereInput!]
+  owner: OwnerRefWhereInput
+  OR: [UnitTableWhereInput!]
+  AND: [UnitTableWhereInput!]
+}
+
+input UnitReferenceWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+}
+
+input UnitTableOrderByInput {
+  field: UnitTableSortField!
+  direction: SortDirection!
+}
+
+enum UnitTableSortField {
+  id
+  baseUnitId
+}
+
+type User implements Node {
+  id: ID!
+  loginName: String!
+  firstName: String
+  lastName: String
+  passwordLastChanged: DateType
+  userActive: Boolean!
+  group: Group!
+  admin: Boolean!
+  groupAdmin: Boolean!
+}
+
+input UserWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  loginName: String
+  loginName_not: String
+  loginName_in: [String!]
+  loginName_not_in: [String!]
+  firstName: String
+  firstName_not: String
+  firstName_in: [String!]
+  firstName_not_in: [String!]
+  lastName: String
+  lastName_not: String
+  lastName_in: [String!]
+  lastName_not_in: [String!]
+  passwordLastChanged: DateType
+  passwordLastChanged_not: DateType
+  passwordLastChanged_gte: DateType
+  passwordLastChanged_gt: DateType
+  passwordLastChanged_lte: DateType
+  passwordLastChanged_lt: DateType
+  userActive: Boolean
+  userActive_not: Boolean
+  group: OwnerRefWhereInput
+  admin: Boolean
+  admin_not: Boolean
+  groupAdmin: Boolean
+  groupAdmin_not: Boolean
+  OR: [UserWhereInput!]
+  AND: [UserWhereInput!]
+}
+
+input UserOrderByInput {
+  field: UserSortField!
+  direction: SortDirection!
+}
+
+input UserRefWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+}
+
+enum UserSortField {
+  id
+  firstName
+  lastName
+  passwordLastChanged
+}
+
+type ValueColumnDefinition implements Node & Named {
+  id: ID!
+  nameTextId: String!
+  shortnameTextId: String!
+  commentTextId: String!
+  names(first: Int, last: Int, skip: Int): [RatedTranslation]
+  shortnames(first: Int, last: Int, skip: Int): [RatedTranslation]
+  comments(first: Int, last: Int, skip: Int): [RatedTranslation]
+  unitTable: UnitTable
+}
+
+input ValueColumnDefinitionWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  unitTableId: String
+  unitTableId_not: String
+  unitTableId_in: [String!]
+  unitTableId_not_in: [String!]
+  OR: [ValueColumnDefinitionWhereInput!]
+  AND: [ValueColumnDefinitionWhereInput!]
+}
+
+input ValueColumnDefinitionOrderByInput {
+  field: ValueColumnDefinitionSortField!
+  direction: SortDirection!
+  element: OrderByElementInput
+}
+
+enum ValueColumnDefinitionSortField {
+  id
+  unitTableId
+}
+
+type ValueTableDefinition implements Node & Named {
+  id: ID!
+  nameTextId: String!
+  shortnameTextId: String!
+  commentTextId: String!
+  names(first: Int, last: Int, skip: Int): [RatedTranslation]
+  shortnames(first: Int, last: Int, skip: Int): [RatedTranslation]
+  comments(first: Int, last: Int, skip: Int): [RatedTranslation]
+}
+
+input ValueTableDefinitionWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  OR: [ValueTableDefinitionWhereInput!]
+  AND: [ValueTableDefinitionWhereInput!]
+}
+
+input ValueTableDefinitionOrderByInput {
+  field: ValueTableDefinitionSortField!
+  direction: SortDirection!
+  element: OrderByElementInput
+}
+
+enum ValueTableDefinitionSortField {
+  id
+}

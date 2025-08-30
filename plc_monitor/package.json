@@ -25,6 +25,9 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/schedule": "^6.0.0",
     "ethernet-ip": "^1.2.5",
+    "modbus-serial": "^8.0.21-no-serial-port",
+    "modbus-stream": "^0.46.0",
+    "modbus-tcp": "^0.4.13",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
